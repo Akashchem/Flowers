@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    
+    <meta charset="utf-8" />
+    <title>Firebase</title>
+</head>
+<body>
+    <style>
+        img {
+            height: 200px;
+            width: 200px;
+            border: 2px
+        }
+    </style>
+    Image Name <input id="name" type="text" />
+    Image Name1 <input id="name1" type="text" />
+    <img id="my" /><br /><br />
+    <button id="s">select</button>
+    <button id="u">upload</button>
+    <button id="r">retrieve</button>
+    <!--------------------------FIRBASE LIBRARIES-------------------------------------------------->
+
+
+    <script id="Main" type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
+        import { getStorage, uploadBytes } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-storage.js";
+
+
+        var imgname, imgurl;
+        var files = [];
+        var reader;
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-us6vtXTzjJb_RtlbBOwfLC_QDXytg6I",
+            authDomain: "candid-connections.firebaseapp.com",
+            databaseURL: "https://candid-connections-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "candid-connections",
+            storageBucket: "candid-connections.appspot.com",
+            messagingSenderId: "218584617634",
+            appId: "1:218584617634:web:8ff7554f1568e91bca7dfb",
+            measurementId: "G-HDFX7P9KV4"
+        };
+
+        //Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+
+        //const analytics = getAnalytics(app);
+
+        //select
+        document.getElementById("s").onclick = function (e) {
+            var input = document.createElement('input');
+            input.type = 'file';
+
+            input.onchange = e => {
+                files = e.target.files;
+                reader = new FileReader();
+                reader.onload = function () {
+                    document.getElementById("my").src = reader.result;
+
+                }
+                reader.readAsDataURL(files[0]);
+
+
+
+            }
+            input.click();
+        }
+        //document.getElementById("u").onclick = function () {
+        //  imgname = document.getElementById('name').value;
+        //var upload = storageRef().put(files[0]);
+        //const storageRef = ref(storage, 'some-child');
+        //const ImagesRef = ref(storage, 'Flowers/' + imgname + '.png');
+        // 'file' comes from the Blob or File API
+        //uploadBytes(ImagesRef, File).then((snapshot) => {
+        //console.log('Uploaded a blob or file!');
+        //});
+
+
+
+        // }
+        document.getElementById("r").onclick = function () {
+            imgname = document.getElementById('name').value;
+            //const ImagesRef = ref(storage, 'gs://bucket/Flowers/' + imgname );
+            //getDownloadURL(ref(storage, ImagesRef))
+            //  .then((url) => {
+            // `url` is the download URL for 'images/stars.jpg'
+
+            // This can be downloaded directly:
+            //    const xhr = new XMLHttpRequest();
+            //  xhr.responseType = 'blob';
+            //xhr.onload = (event) => {
+            //  const blob = xhr.response;
+            //};S
+            //xhr.open('GET', url);
+            //xhr.send();
+            //gsutil cors set cors.json gs://<your-cloud-storage-bucket>
+            // Or inserted into an <img> element
+
+            // my.setAttribute('src', url);
+            //})
+            //.catch((error) => {
+            //  switch (error.code) {
+            //    case 'storage/object-not-found':
+            // File doesn't exist
+            //      break;
+            //case 'storage/unauthorized':
+            // User doesn't have permission to access the object
+            //  break;
+            //case 'storage/canceled':
+            // User canceled the upload
+            //break;
+            const db = getDatabase();
+            const starCountRef = ref(db, 'Flowers/' + imgname);
+            
+            onValue(starCountRef, (snapshot) => {
+                const data = snapshot.val();
+                console.log(data.Link)
+                document.getElementById("my").src = data.Link;
+            });
+
+
+
+        }
+
+
+
+
+
+    </script>
+
+
+</body>
+</html>
